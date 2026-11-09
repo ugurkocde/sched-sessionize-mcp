@@ -16,7 +16,7 @@ jobs:
   publish:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Resolve package from tag
         id: pkg
@@ -35,12 +35,13 @@ jobs:
           fi
           echo "dir=$DIR" >> "$GITHUB_OUTPUT"
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: 22
           registry-url: https://registry.npmjs.org
-          cache: npm
-          cache-dependency-path: ${{ steps.pkg.outputs.dir }}/package-lock.json
+          # No dependency cache in the publishing job, as recommended by setup-node,
+          # so a poisoned cache entry can never end up in a published package.
+          package-manager-cache: false
 
       - name: Install, check and test
         working-directory: ${{ steps.pkg.outputs.dir }}
