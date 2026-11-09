@@ -1,0 +1,10 @@
+node_modules/
+dist/
+*.tgz
+.env
+.env.*
+.DS_Store
+coverage/
+# LICENSE copies made by npm prepack inside each server folder
+sched-mcp-server/LICENSE
+sessionize-mcp-server/LICENSE

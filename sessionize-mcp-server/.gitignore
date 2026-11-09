@@ -1,0 +1,6 @@
+node_modules
+dist
+.env*
+# copied from the repository root by prepack
+LICENSE
+*.tgz

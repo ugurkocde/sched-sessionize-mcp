@@ -1,0 +1,56 @@
+name: Release
+
+# Push a tag named <folder>-v<version>, for example sched-mcp-server-v0.1.1,
+# to publish that server to npm. Requires the NPM_TOKEN repository secret.
+on:
+  push:
+    tags:
+      - "sched-mcp-server-v*"
+      - "sessionize-mcp-server-v*"
+
+permissions:
+  contents: read
+  id-token: write # npm provenance
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Resolve package from tag
+        id: pkg
+        run: |
+          TAG="${GITHUB_REF_NAME}"
+          case "$TAG" in
+            sched-mcp-server-v*) DIR=sched-mcp-server ;;
+            sessionize-mcp-server-v*) DIR=sessionize-mcp-server ;;
+            *) echo "Unknown tag $TAG"; exit 1 ;;
+          esac
+          VERSION="${TAG#${DIR}-v}"
+          PKG_VERSION=$(node -p "require('./${DIR}/package.json').version")
+          if [ "$VERSION" != "$PKG_VERSION" ]; then
+            echo "Tag version $VERSION does not match ${DIR}/package.json version $PKG_VERSION"
+            exit 1
+          fi
+          echo "dir=$DIR" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          registry-url: https://registry.npmjs.org
+          cache: npm
+          cache-dependency-path: ${{ steps.pkg.outputs.dir }}/package-lock.json
+
+      - name: Install, check and test
+        working-directory: ${{ steps.pkg.outputs.dir }}
+        run: |
+          npm ci
+          npm run typecheck
+          npm test
+
+      - name: Publish to npm
+        working-directory: ${{ steps.pkg.outputs.dir }}
+        run: npm publish --provenance --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

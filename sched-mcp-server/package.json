@@ -1,0 +1,57 @@
+{
+  "name": "@ugurlabs/sched-mcp-server",
+  "version": "0.1.0",
+  "description": "MCP server for the Sched event API with read-only or read/write API key access",
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "sched",
+    "events",
+    "conference",
+    "claude"
+  ],
+  "author": "Ugur Koc",
+  "license": "MIT",
+  "homepage": "https://github.com/ugurkocde/sched-sessionize-mcp/tree/main/sched-mcp-server#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ugurkocde/sched-sessionize-mcp.git",
+    "directory": "sched-mcp-server"
+  },
+  "bugs": {
+    "url": "https://github.com/ugurkocde/sched-sessionize-mcp/issues"
+  },
+  "type": "module",
+  "bin": {
+    "sched-mcp-server": "dist/index.js"
+  },
+  "main": "dist/index.js",
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json && chmod +x dist/index.js",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run",
+    "start": "node dist/index.js",
+    "prepack": "cp ../LICENSE ./LICENSE && npm run build"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "1.32.2",
+    "zod": "4.6.7"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.6",
+    "typescript": "7.0.2",
+    "vitest": "5.1.0"
+  }
+}
